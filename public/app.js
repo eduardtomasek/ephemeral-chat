@@ -169,6 +169,7 @@ function bootstrap() {
   const composerForm = document.querySelector('#composer-form');
   const composerInput = document.querySelector('#composer-input');
   const killRoomButton = document.querySelector('#kill-room-button');
+  const messengerSkinButton = document.querySelector('#room-skin-button');
   const roomLockButton = document.querySelector('#room-lock-button');
   const sendButton = composerForm?.querySelector('button[type="submit"]');
   const timeline = document.querySelector('#timeline');
@@ -191,6 +192,7 @@ function bootstrap() {
     || !(composerForm instanceof HTMLFormElement)
     || !(composerInput instanceof HTMLInputElement)
     || !(killRoomButton instanceof HTMLButtonElement)
+    || !(messengerSkinButton instanceof HTMLButtonElement)
     || !(roomLockButton instanceof HTMLButtonElement)
     || !(sendButton instanceof HTMLButtonElement)
     || !(timeline instanceof HTMLOListElement)
@@ -200,6 +202,27 @@ function bootstrap() {
   }
 
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let messengerSkinEnabled = false;
+
+  const renderMessengerSkin = () => {
+    const skinVisible = messengerSkinEnabled && !chatView.hidden;
+    messengerSkinButton.dataset.active = messengerSkinEnabled ? 'true' : 'false';
+    messengerSkinButton.setAttribute('aria-pressed', messengerSkinEnabled ? 'true' : 'false');
+    messengerSkinButton.setAttribute('aria-label', messengerSkinEnabled
+      ? 'Disable Facebook-style skin'
+      : 'Enable Facebook-style skin');
+    messengerSkinButton.title = messengerSkinEnabled
+      ? 'Disable Facebook-style skin'
+      : 'Enable Facebook-style skin';
+    chatView.dataset.skin = skinVisible ? 'messenger' : 'default';
+
+    if (skinVisible) {
+      document.body.dataset.roomSkin = 'messenger';
+      return;
+    }
+
+    delete document.body.dataset.roomSkin;
+  };
 
   const setComposerEnabled = (enabled) => {
     roomLockButton.disabled = !enabled;
@@ -361,6 +384,7 @@ function bootstrap() {
     destroyLocalSession();
     joinView.hidden = false;
     chatView.hidden = true;
+    renderMessengerSkin();
     joinError.hidden = false;
     joinError.textContent = message;
     chatError.hidden = true;
@@ -389,27 +413,49 @@ function bootstrap() {
         continue;
       }
 
-      const header = document.createElement('div');
-      header.className = 'message-header';
+      item.classList.add(message.authoredByMe ? 'message-own' : 'message-other');
 
-      const author = document.createElement('strong');
-      author.textContent = message.username;
-      author.style.color = colorForUsername(message.username);
+      if (messengerSkinEnabled) {
+        const meta = document.createElement('div');
+        meta.className = 'message-meta';
 
-      const prompt = document.createElement('span');
-      prompt.className = message.authoredByMe ? 'message-prompt message-prompt-own' : 'message-prompt';
-      prompt.textContent = '>';
+        const author = document.createElement('strong');
+        author.className = 'message-author';
+        author.textContent = message.username;
 
-      const time = document.createElement('span');
-      time.className = 'message-time';
-      time.textContent = formatMessageTime(message.sentAt);
+        const time = document.createElement('span');
+        time.className = 'message-time';
+        time.textContent = formatMessageTime(message.sentAt);
 
-      const body = document.createElement('p');
-      body.className = 'message-body';
-      body.textContent = message.msg;
+        const body = document.createElement('p');
+        body.className = 'message-body';
+        body.textContent = message.msg;
 
-      header.append(time, author, prompt, body);
-      item.append(header);
+        meta.append(author, time);
+        item.append(meta, body);
+      } else {
+        const header = document.createElement('div');
+        header.className = 'message-header';
+
+        const author = document.createElement('strong');
+        author.textContent = message.username;
+        author.style.color = colorForUsername(message.username);
+
+        const prompt = document.createElement('span');
+        prompt.className = message.authoredByMe ? 'message-prompt message-prompt-own' : 'message-prompt';
+        prompt.textContent = '>';
+
+        const time = document.createElement('span');
+        time.className = 'message-time';
+        time.textContent = formatMessageTime(message.sentAt);
+
+        const body = document.createElement('p');
+        body.className = 'message-body';
+        body.textContent = message.msg;
+
+        header.append(time, author, prompt, body);
+        item.append(header);
+      }
 
       if (message.deliveryState && message.deliveryState !== 'sent') {
         const status = document.createElement('span');
@@ -509,6 +555,7 @@ function bootstrap() {
         localUsernameNode.textContent = state.localUsername;
         joinView.hidden = true;
         chatView.hidden = false;
+        renderMessengerSkin();
         state.joined = true;
         setComposerEnabled(true);
         composerInput.focus();
@@ -669,6 +716,7 @@ function bootstrap() {
       if (!state.joined) {
         joinView.hidden = false;
         chatView.hidden = true;
+        renderMessengerSkin();
         joinError.hidden = false;
         joinError.textContent = event.reason || 'Unable to join room.';
         return;
@@ -776,6 +824,12 @@ function bootstrap() {
     }));
   });
 
+  messengerSkinButton.addEventListener('click', () => {
+    messengerSkinEnabled = !messengerSkinEnabled;
+    renderMessengerSkin();
+    renderTimeline();
+  });
+
   roomLockButton.addEventListener('click', () => {
     if (!state.socket
       || state.socket.readyState !== WebSocket.OPEN
@@ -806,6 +860,7 @@ function bootstrap() {
   });
   renderUnreadState();
   renderRoomLockState();
+  renderMessengerSkin();
 }
 
 if (typeof document !== 'undefined') {
