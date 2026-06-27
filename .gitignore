@@ -1,0 +1,22 @@
+.env
+.env.local
+node_modules/
+dist/
+.scratch/
+.gitnexus
+.claude
+.serena
+
+# local project notes / one-off helper files
+refresh-intel.sh
+audit-grepai.sh
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.grepai/
+CLAUDE.md
+AGENTS.md
+docs/
+Caddyfile
+

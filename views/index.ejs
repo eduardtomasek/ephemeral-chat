@@ -1,0 +1,164 @@
+<!--
+
+  ╔═══════════════════════════════════════════════════════════════════════╗
+  ║                                                                       ║
+  ║   PRIVACY IS NOT A PRIVILEGE. IT IS A FUNDAMENTAL HUMAN RIGHT.        ║
+  ║                                                                       ║
+  ║   No government, no corporation, no authority of any kind             ║
+  ║   has the right to read your private communications.                  ║
+  ║   The moment you are forced to whisper, freedom is already wounded.   ║
+  ║                                                                       ║
+  ║   This software was built on a simple principle:                      ║
+  ║   what two people say to each other belongs to them alone.            ║
+  ║   Not to the state. Not to the platform. Not to anyone watching.      ║
+  ║                                                                       ║
+  ║   Encryption is not a weapon. It is a door with a lock.               ║
+  ║   Every human being deserves a door with a lock.                      ║
+  ║                                                                       ║
+  ║   History has shown us again and again that surveillance              ║
+  ║   does not protect the innocent — it silences them.                   ║
+  ║   The journalist. The dissident. The whistleblower.                   ║
+  ║   The person who simply refuses to be afraid.                         ║
+  ║                                                                       ║
+  ║   If you are reading this, you understand.                            ║
+  ║   Build tools that protect people.                                    ║
+  ║   Share knowledge that cannot be taken away.                          ║
+  ║   Speak freely, while you still can.                                  ║
+  ║                                                                       ║
+  ╚═══════════════════════════════════════════════════════════════════════╝
+
+
+  ███████╗██████╗ ███████╗███████╗    ██╗  ██╗███████╗██╗   ██╗██╗███╗   ██╗
+  ██╔════╝██╔══██╗██╔════╝██╔════╝    ██║ ██╔╝██╔════╝██║   ██║██║████╗  ██║
+  █████╗  ██████╔╝█████╗  █████╗      █████╔╝ █████╗  ██║   ██║██║██╔██╗ ██║
+  ██╔══╝  ██╔══██╗██╔══╝  ██╔══╝      ██╔═██╗ ██╔══╝  ╚██╗ ██╔╝██║██║╚██╗██║
+  ██║     ██║  ██║███████╗███████╗    ██║  ██╗███████╗  ╚████╔╝ ██║██║ ╚████║
+  ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝╚══════╝   ╚═══╝  ╚═╝╚═╝  ╚═══╝
+
+  In memory of Kevin Mitnick (1963–2023)
+  The most celebrated hacker of his generation.
+  Hunted, imprisoned, and silenced — not for causing harm,
+  but for knowing too much and refusing to be invisible.
+
+  "The more they restrict, the more people will want to know."
+  — KDM
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= appTitle %></title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/app.css">
+    <script type="module" src="/assets/app.js"></script>
+  </head>
+  <body>
+    <main class="screen">
+      <section class="panel" aria-labelledby="app-title">
+        <div class="panel-main">
+          <section class="view-card" id="join-view">
+            <header class="panel-header">
+              <h1 id="app-title"><%= appTitle %></h1>
+              <p class="intro">Short-lived room chat for sensitive conversations, with keys derived locally and plaintext never touching the server.</p>
+            </header>
+
+            <div class="join-layout">
+              <div class="section-heading">
+                <div>
+                  <p class="section-kicker">Room access</p>
+                  <h2>Join with a shared secret</h2>
+                  <p class="section-copy">Everyone using the same shared key lands in the same encrypted room instance.</p>
+                </div>
+              </div>
+
+              <form class="join-form" id="join-form" autocomplete="off">
+                <label class="field">
+                  <span>Shared key</span>
+                  <input id="shared-key" name="sharedKey" type="password" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false" required>
+                </label>
+                <label class="field">
+                  <span>Username</span>
+                  <input id="username" name="username" type="text" maxlength="8" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+                </label>
+                <details class="room-settings">
+                  <summary>Room settings and policy overrides</summary>
+                  <div class="settings-grid">
+                    <label class="field">
+                      <span>Max people</span>
+                      <input id="max-people" name="maxPeople" type="number" min="1" max="<%= maxClientsPerRoom %>" step="1" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+                    </label>
+                    <label class="field toggle">
+                      <input id="allow-backlog" name="allowBacklog" type="checkbox" autocomplete="off">
+                      <span>Enable backlog</span>
+                    </label>
+                    <label class="field">
+                      <span>Max backlog messages</span>
+                      <input id="max-backlog-messages" name="maxBacklogMessages" type="number" min="1" max="<%= maxBacklogMessages %>" step="1" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+                    </label>
+                    <label class="field toggle">
+                      <input id="lock-room-after-second-join" name="lockRoomAfterSecondJoin" type="checkbox" autocomplete="off">
+                      <span>Lock room after second join</span>
+                    </label>
+                    <p class="note">Once the second person joins, nobody can rejoin this room lifecycle if they disconnect.</p>
+                    <label class="field">
+                      <span>Message self-destruct (ms)</span>
+                      <input id="message-self-destruct-ms" name="messageSelfDestructMs" type="number" min="1" max="<%= maxMessageSelfDestructMs %>" step="1" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+                    </label>
+                    <label class="field">
+                      <span>Room self-destruct (ms)</span>
+                      <input id="room-self-destruct-ms" name="roomSelfDestructMs" type="number" min="1" max="<%= maxRoomSelfDestructMs %>" step="1" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+                    </label>
+                    <p class="note">Applies only if you are the first person to join this room.</p>
+                  </div>
+                </details>
+                <button type="submit">Join room</button>
+              </form>
+
+              <div class="info-grid" aria-label="Security notes">
+                <p class="note">Shared keys stay in browser memory only and are never sent to the server.</p>
+                <p class="note">Display names are self-asserted labels, not verified identity.</p>
+              </div>
+              <p class="error" id="join-error" hidden></p>
+            </div>
+          </section>
+
+          <section class="view-card view-chat" id="chat-view" hidden>
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Live room</p>
+                <h2>Encrypted session</h2>
+              </div>
+              <button class="room-lock-button" id="room-lock-button" type="button" aria-label="Lock room" aria-pressed="false" title="Unlocked">
+                <svg class="icon-unlocked" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M17 9h-1V7a4 4 0 0 0-8 0h2a2 2 0 1 1 4 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm0 10H7v-8h10v8Z" fill="currentColor"/>
+                </svg>
+                <svg class="icon-locked" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M17 9h-1V7a4 4 0 1 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 1 1 4 0v2h-4V7Zm7 12H7v-8h10v8Z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="chat-meta">
+              <p class="meta-pill">Alias <strong id="local-username"></strong></p>
+              <p class="meta-pill" id="room-settings-summary" hidden></p>
+              <p class="meta-pill meta-pill-warning" id="room-expiry-countdown" hidden></p>
+            </div>
+            <button class="unread-banner" id="unread-banner" type="button" hidden></button>
+            <ol class="timeline" id="timeline" aria-live="polite"></ol>
+            <p class="error" id="chat-error" hidden></p>
+            <form class="composer" id="composer-form" autocomplete="off">
+              <button class="kill-button" id="kill-room-button" type="button" aria-label="Kill room">
+                KILL
+              </button>
+              <input id="composer-input" type="text" maxlength="4000" placeholder="Type an encrypted message" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" disabled>
+              <button type="submit" disabled>Send</button>
+            </form>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
