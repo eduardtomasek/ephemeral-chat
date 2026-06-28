@@ -874,12 +874,13 @@ body[data-room-skin='messenger'] #chat-view .kill-button:focus-visible {
   }
 
   body[data-room-skin='messenger'] #chat-view .composer {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: 1fr;
   }
 
+  body[data-room-skin='messenger'] #chat-view .composer input,
   body[data-room-skin='messenger'] #chat-view .kill-button,
   body[data-room-skin='messenger'] #chat-view .composer button {
-    width: auto;
+    width: 100%;
   }
 
   body[data-room-skin='messenger'] #chat-view .message-body {
