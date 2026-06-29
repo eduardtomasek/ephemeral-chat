@@ -1,5 +1,21 @@
 # Ephemeral Chat
 
+<p align="center">
+  <img alt="License" src="https://img.shields.io/badge/license-Educational-blue.svg">
+  <img alt="Open Source" src="https://img.shields.io/badge/Open%20Source-%E2%9D%A4-success.svg">
+  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-24%2B-339933?logo=node.js&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white">
+  <img alt="WebSocket" src="https://img.shields.io/badge/Transport-WebSocket-010101?logo=socketdotio&logoColor=white">
+  <img alt="End-to-End Encrypted" src="https://img.shields.io/badge/E2EE-AES--GCM-2ea44f.svg">
+  <img alt="Web Crypto" src="https://img.shields.io/badge/Crypto-Web%20Crypto%20API-FF6F00.svg">
+  <img alt="No Database" src="https://img.shields.io/badge/Storage-In--Memory%20only-orange.svg">
+  <img alt="No Accounts" src="https://img.shields.io/badge/Accounts-None-lightgrey.svg">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white">
+  <img alt="Caddy" src="https://img.shields.io/badge/Reverse%20Proxy-Caddy-1F88C0?logo=caddy&logoColor=white">
+  <img alt="PM2" src="https://img.shields.io/badge/Process%20Manager-PM2-2B037A?logo=pm2&logoColor=white">
+  <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
+</p>ß
+
 Ephemeral Chat is a small end-to-end encrypted web chat for short-lived conversations. It runs as a single Node.js process, keeps room state only in memory, and never stores plaintext messages or shared keys on the server.
 
 Users join by entering the same shared key. The browser derives both the room ID and the encryption key locally, opens a same-origin WebSocket connection to `/ws`, then sends a `join` frame with the derived `roomId` and any requested room settings. In stateless multi-room mode, the server treats `roomId` as the transport-level room selector and does not verify knowledge of the original shared key. When the last participant leaves and the idle grace period expires, the room is removed from RAM.
